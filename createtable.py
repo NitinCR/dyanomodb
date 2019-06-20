@@ -1,39 +1,60 @@
-# MoviesCreateTable: Program to show how to create a table in DynamoDB, using Python and boto3.
-from __future__ import print_function # Python 2/3 compatibility
-import boto3 # Boto3 is the AWS SDK library for Python.
+                 # Creation of Table in DynamoDB
 
+ # a SDK package for aws in python
+import boto3 
 
-#The region_name is the region where it is stored
-dynamodb = boto3.resource('dynamodb',region_name='us-east-1') 
+# user should go on with below line of code if they have'nt configured through AWS previously (Note)
+# client = boto3.client('dynamodb',aws_access_key_id='yyyy', aws_secret_access_key='xxxx', region_name='***')                                                  
 
-#Creating a table
-table = dynamodb.create_table(
-    TableName='Movies',
-    KeySchema=[                #key schema specifies the attributes that make up the primary key of a table, or the key attributes of an index
+# aws service resource and region are set.
+
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1') 
+name=input("Enter name of the table :\t")
+
+# Creation of table
+
+table = dynamodb.create_table(                                 
+    TableName=movies,
+    KeySchema=[
         {
+            
+         # here Attribute 'year' is a partition key and it is of type hash which is derived using hash function
+                                                                
             'AttributeName': 'year',
-            'KeyType': 'HASH'  #Partition key
-        },                     #usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values
+            'KeyType': 'HASH'  #Partition key                 
+                                                                
+        },
         {
-            'AttributeName': 'title',
+            
+         # here Attribute 'title' is a sort key and it is of type Range
+         
+            'AttributeName': 'title',                         
             'KeyType': 'RANGE'  #Sort key
-        }                       #stores items with the same partition key,can be called by the unique ID
+        }
     ],
-    AttributeDefinitions=[
+    AttributeDefinitions=[                                      
         {
-            'AttributeName': 'year',
-            'AttributeType': 'N' #the attribute is of type Number
+            
+        
+             # N represents the datatype of attribute 'year' should be a number
+        
+            'AttributeName': 'year',                          
+            'AttributeType': 'N'
         },
         {
-            'AttributeName': 'title',
-            'AttributeType': 'S' #the attribute is of type String
+             # S represents the datatype of attribute 'title' should be a string
+        
+            'AttributeName': 'title',                        
+            'AttributeType': 'S'
         },
 
     ],
+        # throughput parameters
     ProvisionedThroughput={
-        'ReadCapacityUnits': 10, #The maximum number of strongly consistent reads consumed per second before DynamoDB
-        'WriteCapacityUnits':10, #The maximum number of writes consumed per second before DynamoDB
+        'ReadCapacityUnits': 10,                             
+        'WriteCapacityUnits': 10
     }
+    
 )
 
-print("Table status:", table.table_status) #displays the status of the table
+print("Table status:", table.table_status)
